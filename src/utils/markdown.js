@@ -18,6 +18,7 @@
 
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
+import hljs from 'highlight.js';
 
 // Configure marked with GitHub Flavored Markdown and security settings
 marked.setOptions({
@@ -40,11 +41,19 @@ renderer.link = (href, title, text) => {
   return html.replace('<a', '<a target="_blank" rel="noopener noreferrer"');
 };
 
-// Configure code block rendering with language classes for syntax highlighting
+// Configure code block rendering with syntax highlighting
 renderer.code = ({ text, lang }) => {
-  const language = lang || 'plain';
-  // Render with language class for future syntax highlighting integration
-  return `<pre class="code-block"><code class="language-${language}">${text}</code></pre>`;
+  if (lang && hljs.getLanguage(lang)) {
+    try {
+      const highlighted = hljs.highlight(text, { language: lang }).value;
+      return `<pre class="code-block"><code class="language-${lang} hljs">${highlighted}</code></pre>`;
+    } catch (err) {
+      console.error('Syntax highlighting error:', err);
+    }
+  }
+  // Fallback to plain text with auto-detection
+  const autoHighlighted = hljs.highlightAuto(text).value;
+  return `<pre class="code-block"><code class="hljs">${autoHighlighted}</code></pre>`;
 };
 
 // Configure inline code rendering

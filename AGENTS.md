@@ -9,9 +9,7 @@
 
 ## Build, Test, and Development Commands
 - `npm install` fetches dependencies.
-- `npm run dev` starts Vite with HMR (default http://localhost:5173).
 - `npm run build` creates a production bundle in `dist/`.
-- `npm run preview` serves the built bundle locally.
 - `npm run lint` runs ESLint via the flat config; fix warnings before PRs.
 
 ## Coding Style & Naming Conventions
