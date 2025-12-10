@@ -151,7 +151,7 @@ body {
 }
 /* Toolbar */
 .editorControls {
-  padding: 16px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid var(--border-primary);
     background: var(--bg-toolbar);
   display: flex;
@@ -162,13 +162,13 @@ body {
 .toggleSidebarBtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
+  gap: 6px;
+  padding: 6px 12px;
   border-radius: 8px;
   background: var(--bg-primary);
     border: 1px solid var(--border-secondary);
     color: var(--text-primary);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -460,7 +460,7 @@ body {
   background: var(--bg-tertiary);
     border-bottom: 2px solid var(--border-secondary);
   }
-  
+
   [data-theme="dark"] .preview thead {
     background: var(--bg-hover);
 }
@@ -501,7 +501,7 @@ body {
 .preview tbody tr:nth-child(even) {
   background: var(--bg-tertiary);
   }
-  
+
   [data-theme="dark"] .preview tbody tr:nth-child(even) {
     background: var(--bg-secondary);
 }

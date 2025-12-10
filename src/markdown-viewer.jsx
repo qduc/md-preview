@@ -22,15 +22,35 @@ const MarkdownViewer = () => {
   const [syncScrollEnabled, setSyncScrollEnabled] = useState(true);
   const editorRef = useRef(null);
   const previewRef = useRef(null);
+  const isSyncingRef = useRef(null);
 
   const handleEditorScroll = () => {
     if (!syncScrollEnabled || !editorRef.current || !previewRef.current) return;
+    if (isSyncingRef.current === 'preview') return;
+    isSyncingRef.current = 'editor';
 
     const { scrollTop, scrollHeight, clientHeight } = editorRef.current;
     const percentage = scrollTop / (scrollHeight - clientHeight);
 
     const preview = previewRef.current;
     preview.scrollTop = percentage * (preview.scrollHeight - preview.clientHeight);
+    requestAnimationFrame(() => {
+      isSyncingRef.current = null;
+    });
+  };
+
+  const handlePreviewScroll = () => {
+    if (!syncScrollEnabled || !editorRef.current || !previewRef.current) return;
+    if (isSyncingRef.current === 'editor') return;
+    isSyncingRef.current = 'preview';
+
+    const { scrollTop, scrollHeight, clientHeight } = previewRef.current;
+    const percentage = scrollTop / (scrollHeight - clientHeight);
+    const editor = editorRef.current;
+    editor.scrollTop = percentage * (editor.scrollHeight - editor.clientHeight);
+    requestAnimationFrame(() => {
+      isSyncingRef.current = null;
+    });
   };
 
   return (
@@ -69,6 +89,7 @@ const MarkdownViewer = () => {
             content={content}
             styles={styles}
             scrollRef={previewRef}
+            onScroll={handlePreviewScroll}
           />
         </div>
       </div>

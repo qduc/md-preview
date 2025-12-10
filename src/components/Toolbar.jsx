@@ -9,7 +9,7 @@ function Toolbar({ showNotesList, onToggleSidebar, syncScrollEnabled, onToggleSy
         onClick={onToggleSidebar}
         aria-pressed={showNotesList}
       >
-        <LayoutPanelLeft size={18} />
+        <LayoutPanelLeft size={16} />
         <span>{showNotesList ? 'Hide notes' : 'Show notes'}</span>
       </button>
       <button
@@ -18,7 +18,7 @@ function Toolbar({ showNotesList, onToggleSidebar, syncScrollEnabled, onToggleSy
         aria-pressed={syncScrollEnabled}
         style={{ marginLeft: '10px' }}
       >
-        <ArrowLeftRight size={18} />
+        <ArrowLeftRight size={16} />
         <span>Sync Scroll: {syncScrollEnabled ? 'On' : 'Off'}</span>
       </button>
       <button
