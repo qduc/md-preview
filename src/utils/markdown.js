@@ -46,7 +46,7 @@ renderer.code = ({ text, lang }) => {
   if (lang && hljs.getLanguage(lang)) {
     try {
       const highlighted = hljs.highlight(text, { language: lang }).value;
-      return `<pre class="code-block"><code class="language-${lang} hljs">${highlighted}</code></pre>`;
+      return `<pre class="code-block"><div class="code-header">${lang}</div><code class="language-${lang} hljs">${highlighted}</code></pre>`;
     } catch (err) {
       console.error('Syntax highlighting error:', err);
     }
@@ -76,6 +76,7 @@ const purifyConfig = {
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
     'input', // For GFM task lists
     'span',
+    'div', // For code block headers
   ],
   ALLOWED_ATTR: [
     'href', 'title', 'target', 'rel',

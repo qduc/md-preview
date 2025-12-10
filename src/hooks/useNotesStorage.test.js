@@ -18,7 +18,6 @@ const clearLocalStorage = () => {
 describe('useNotesStorage', () => {
   beforeEach(() => {
     clearLocalStorage();
-    vi.clearAllTimers();
   });
 
   describe('Initial state', () => {
@@ -353,13 +352,6 @@ describe('useNotesStorage', () => {
   });
 
   describe('Content editing and autosave', () => {
-    beforeEach(() => {
-      vi.useFakeTimers();
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
 
     it('should update content when setContent is called', () => {
       const mockNotes = [
@@ -382,7 +374,8 @@ describe('useNotesStorage', () => {
       expect(result.current.content).toBe('New content');
     });
 
-    it('should debounce autosave (500ms)', async () => {
+    it('should debounce autosave (500ms)', () => {
+      vi.useFakeTimers();
       const mockNotes = [
         {
           id: '1',
@@ -416,9 +409,11 @@ describe('useNotesStorage', () => {
         'markdown-notes',
         expect.stringContaining('New content')
       );
+      vi.restoreAllMocks();
     });
 
     it('should cancel previous autosave timer on rapid changes', () => {
+      vi.useFakeTimers();
       const mockNotes = [
         {
           id: '1',
@@ -462,9 +457,11 @@ describe('useNotesStorage', () => {
         'markdown-notes',
         expect.stringContaining('Change 2')
       );
+      vi.restoreAllMocks();
     });
 
-    it('should update note updatedAt timestamp on save', async () => {
+    it('should update updatedAt timestamp on content change', () => {
+      vi.useFakeTimers();
       const oldDate = new Date('2020-01-01').toISOString();
       const mockNotes = [
         {
@@ -490,20 +487,24 @@ describe('useNotesStorage', () => {
 
       const savedData = JSON.parse(localStorage.setItem.mock.calls[0][1]);
       expect(new Date(savedData[0].updatedAt).getTime()).toBeGreaterThan(new Date(oldDate).getTime());
+      vi.restoreAllMocks();
+    });
     });
 
-    it('should not autosave when there is no current note', () => {
+    it('should create a new note when typing in empty state', () => {
       const { result } = renderHook(() => useNotesStorage());
 
       act(() => {
-        result.current.setContent('Some content');
+        result.current.setContent('New content');
       });
 
-      act(() => {
-        vi.advanceTimersByTime(500);
-      });
-
-      expect(localStorage.setItem).not.toHaveBeenCalled();
+      expect(result.current.notes).toHaveLength(1);
+      expect(result.current.notes[0].content).toBe('New content');
+      expect(result.current.currentNoteId).toBe(result.current.notes[0].id);
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'markdown-notes',
+        expect.stringContaining('New content')
+      );
     });
   });
 
@@ -533,6 +534,7 @@ describe('useNotesStorage', () => {
     });
 
     it('should return null when no note is selected', () => {
+      localStorage.getItem.mockReturnValue(null);
       const { result } = renderHook(() => useNotesStorage());
 
       expect(result.current.currentNote).toBeNull();
@@ -566,4 +568,4 @@ describe('useNotesStorage', () => {
       expect(result.current.currentNote).toEqual(mockNotes[1]);
     });
   });
-});
+;

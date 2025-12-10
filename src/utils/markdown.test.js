@@ -88,17 +88,17 @@ describe('renderMarkdown', () => {
     });
 
     it('should render code blocks without language', () => {
-      const result = renderMarkdown('```\ncode block\n```');
+      const result = renderMarkdown('```\nhello world\n```');
       expect(result).toContain('<pre class="code-block">');
       expect(result).toContain('<code');
-      expect(result).toContain('code block');
+      expect(result).toContain('hello world');
     });
 
     it('should render code blocks with language', () => {
       const result = renderMarkdown('```javascript\nconst x = 1;\n```');
       expect(result).toContain('<pre class="code-block">');
-      expect(result).toContain('class="language-javascript"');
-      expect(result).toContain('const x = 1;');
+      expect(result).toContain('language-javascript');
+      expect(result).toContain('hljs-keyword');
     });
 
     it('should preserve whitespace in code blocks', () => {
