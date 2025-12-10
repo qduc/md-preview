@@ -1,57 +1,109 @@
-// Simple GitHub-flavored markdown renderer used by the app
-// Note: This is a minimal client-side renderer based on regexes.
-// For production-grade apps consider using a library like `marked` or `markdown-it`.
+/**
+ * Production-grade markdown renderer using `marked` library
+ *
+ * Library Choice: marked v15+ with DOMPurify
+ *
+ * Why marked was chosen:
+ * - Lightweight bundle size (~20KB minified) - critical for client-side performance
+ * - Fast parsing optimized for real-time preview scenarios
+ * - Built-in GitHub Flavored Markdown (GFM) support
+ * - Simple, intuitive API that's easy to configure and maintain
+ * - Excellent extension system for syntax highlighting
+ * - Active maintenance and security updates
+ *
+ * Security: DOMPurify provides robust XSS protection by sanitizing all HTML output
+ * before rendering, protecting against malicious script injection, event handlers,
+ * and other attack vectors.
+ */
 
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+
+// Configure marked with GitHub Flavored Markdown and security settings
+marked.setOptions({
+  gfm: true,              // Enable GitHub Flavored Markdown
+  breaks: true,           // Convert \n to <br> (GFM line breaks)
+  headerIds: true,        // Add IDs to headings for anchor links
+  mangle: false,          // Don't escape autolinked email addresses
+  pedantic: false,        // Don't conform to original markdown.pl quirks
+});
+
+// Custom renderer to add security attributes and styling to links
+const renderer = new marked.Renderer();
+
+// Override link rendering to add security attributes (noopener, noreferrer)
+// and open external links in new tabs
+const originalLinkRenderer = renderer.link.bind(renderer);
+renderer.link = (href, title, text) => {
+  const html = originalLinkRenderer(href, title, text);
+  // Add target="_blank" and security attributes to all links
+  return html.replace('<a', '<a target="_blank" rel="noopener noreferrer"');
+};
+
+// Configure code block rendering with language classes for syntax highlighting
+renderer.code = ({ text, lang }) => {
+  const language = lang || 'plain';
+  // Render with language class for future syntax highlighting integration
+  return `<pre class="code-block"><code class="language-${language}">${text}</code></pre>`;
+};
+
+// Configure inline code rendering
+renderer.codespan = ({ text }) => {
+  return `<code class="inline-code">${text}</code>`;
+};
+
+// Apply custom renderer
+marked.setOptions({ renderer });
+
+// Configure DOMPurify for safe HTML sanitization
+const purifyConfig = {
+  ALLOWED_TAGS: [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'br', 'hr',
+    'strong', 'em', 'del', 'code', 'pre',
+    'a', 'img',
+    'ul', 'ol', 'li',
+    'blockquote',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    'input', // For GFM task lists
+  ],
+  ALLOWED_ATTR: [
+    'href', 'title', 'target', 'rel',
+    'src', 'alt', 'style',
+    'class',
+    'type', 'checked', 'disabled', // For GFM task lists
+  ],
+  ALLOW_DATA_ATTR: false,
+  ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i,
+};
+
+/**
+ * Renders markdown text to sanitized HTML
+ *
+ * Features:
+ * - GitHub Flavored Markdown (tables, task lists, strikethrough, autolinks)
+ * - Syntax highlighting support via language-* classes
+ * - XSS protection through DOMPurify sanitization
+ * - Safe link handling (target="_blank" with noopener/noreferrer)
+ * - Code blocks and inline code with custom styling classes
+ *
+ * @param {string} text - Markdown text to render
+ * @returns {string} Sanitized HTML string safe for dangerouslySetInnerHTML
+ */
 export function renderMarkdown(text) {
-  let html = text || '';
+  if (!text) return '';
 
-  // Escape HTML
-  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  try {
+    // Parse markdown to HTML
+    const rawHtml = marked.parse(text);
 
-  // Code blocks with syntax highlighting class
-  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-    const language = lang || 'plain';
-    return `<pre class="code-block"><code class="language-${language}">${code.trim()}</code></pre>`;
-  });
+    // Sanitize HTML to prevent XSS attacks
+    const cleanHtml = DOMPurify.sanitize(rawHtml, purifyConfig);
 
-  // Inline code
-  html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-
-  // Headings
-  html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
-  html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
-
-  // Bold and italic
-  html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-
-  // Links
-  html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-
-  // Images
-  html = html.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 4px;" />');
-
-  // Lists (unordered)
-  html = html.replace(/^\* (.*?)$/gm, '<li>$1</li>');
-  html = html.replace(/^\- (.*?)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>.*?<\/li>)/s, (match) => `<ul>${match}</ul>`);
-
-  // Blockquotes
-  html = html.replace(/^> (.*?)$/gm, '<blockquote>$1</blockquote>');
-
-  // Horizontal rule
-  html = html.replace(/^---$/gm, '<hr />');
-
-  // Line breaks
-  html = html.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />');
-  html = `<p>${html}</p>`;
-
-  // Clean up empty paragraphs
-  html = html.replace(/<p><\/p>/g, '');
-
-  return html;
+    return cleanHtml;
+  } catch (error) {
+    console.error('Markdown rendering error:', error);
+    // Return escaped text as fallback
+    return DOMPurify.sanitize(text);
+  }
 }

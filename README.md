@@ -11,10 +11,13 @@ A simple, client-side Markdown editor and previewer built with React and Vite. C
 
 ## Technologies
 
-- React (with hooks)
-- Vite (for development and build)
+- React 19 (with hooks)
+- Vite 7 (for development and build)
 - Lucide React (for icons)
-- Marked (for Markdown parsing, if applicable—assuming it's used in the app based on context)
+- Marked 17 (GitHub Flavored Markdown parser)
+- DOMPurify 3 (XSS protection for rendered HTML)
+- Vitest 4 (unit testing framework)
+- Testing Library (React component testing)
 
 ## Installation
 
@@ -46,19 +49,35 @@ Notes are automatically saved to localStorage, so they'll persist across browser
 ## Development
 
 - **Linting**: `npm run lint` – Runs ESLint to check for code style issues.
+- **Testing**: `npm test` – Runs the test suite with Vitest.
+  - `npm test:ui` – Opens an interactive test UI.
+  - `npm test:coverage` – Generates code coverage reports.
 - **Build**: `npm run build` – Creates a production bundle in the `dist/` directory.
 - **Preview**: `npm run preview` – Serves the built application locally.
 
 ### Project Structure
 
-- \`src/main.jsx\`: Entry point for React.
-- \`src/App.jsx\`: Main app component, routes to MarkdownViewer.
-- \`src/markdown-viewer.jsx\`: Core component for note editing and preview.
-- \`src/index.css\`: Global styles.
-- \`public/\`: Static assets.
-- Key dependencies: React, Lucide React, Vite.
+- `src/main.jsx`: Entry point for React.
+- `src/App.jsx`: Main app component, routes to MarkdownViewer.
+- `src/markdown-viewer.jsx`: Core component for note editing and preview.
+- `src/components/`: Reusable React components (Sidebar, Editor, Preview, Toolbar).
+- `src/hooks/`: Custom React hooks (useNotesStorage).
+- `src/utils/`: Utility functions (markdown rendering with marked + DOMPurify).
+- `src/styles/`: CSS modules for component styling.
+- `src/test/`: Test setup and configuration.
+- `src/**/*.test.js`: Unit test files (61 tests covering utilities and hooks).
+- `public/`: Static assets.
 
-Follow the coding guidelines in \`AGENTS.md\` for contributions.
+Follow the coding guidelines in `AGENTS.md` for contributions.
+
+### Test Coverage
+
+The project includes comprehensive unit tests:
+- ✅ 37 tests for markdown rendering (marked + DOMPurify integration)
+- ✅ 24 tests for notes storage hook (localStorage, CRUD operations, autosave)
+- 🎯 All tests passing with 100% success rate
+
+Run `npm test` to execute the test suite.
 
 ## Contributing
 

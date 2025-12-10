@@ -1,11 +1,11 @@
 import React from 'react';
 import { LayoutPanelLeft } from 'lucide-react';
 
-function Toolbar({ showNotesList, onToggleSidebar }) {
+function Toolbar({ showNotesList, onToggleSidebar, styles }) {
   return (
-    <div className="editor-controls">
+    <div className={styles.editorControls}>
       <button
-        className="toggle-sidebar-btn"
+        className={styles.toggleSidebarBtn}
         onClick={onToggleSidebar}
         aria-pressed={showNotesList}
       >

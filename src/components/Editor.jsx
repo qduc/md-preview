@@ -1,11 +1,11 @@
 import React from 'react';
 
-function Editor({ value, onChange, placeholder }) {
+function Editor({ value, onChange, placeholder, styles }) {
   return (
-    <div className="pane">
-      <div className="pane-label">Editor</div>
+    <div className={styles.pane}>
+      <div className={styles.paneLabel}>Editor</div>
       <textarea
-        className="editor"
+        className={styles.editor}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}

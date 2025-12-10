@@ -1,29 +1,29 @@
 import React from 'react';
 import { FileText, Plus, Trash2 } from 'lucide-react';
 
-function Sidebar({ visible, notes, currentNoteId, onCreate, onDelete, onSelect }) {
+function Sidebar({ visible, notes, currentNoteId, onCreate, onDelete, onSelect, styles }) {
   return (
-    <div className={`sidebar ${!visible ? 'hidden' : ''}`}>
-      <div className="sidebar-header">
-        <div className="sidebar-title">
+    <div className={`${styles.sidebar} ${!visible ? styles.hidden : ''}`}>
+      <div className={styles.sidebarHeader}>
+        <div className={styles.sidebarTitle}>
           <FileText size={16} />
           Notes
         </div>
-        <button className="new-note-btn" onClick={onCreate}>
+        <button className={styles.newNoteBtn} onClick={onCreate}>
           <Plus size={16} />
           New
         </button>
       </div>
-      <div className="notes-list">
+      <div className={styles.notesList}>
         {notes.map((note) => (
           <div
             key={note.id}
-            className={`note-item ${currentNoteId === note.id ? 'active' : ''}`}
+            className={`${styles.noteItem} ${currentNoteId === note.id ? styles.active : ''}`}
             onClick={() => onSelect(note.id)}
           >
-            <div className="note-item-content">
-              <div className="note-item-title">{note.title}</div>
-              <div className="note-item-date">
+            <div className={styles.noteItemContent}>
+              <div className={styles.noteItemTitle}>{note.title}</div>
+              <div className={styles.noteItemDate}>
                 {new Date(note.updatedAt).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',
@@ -33,7 +33,7 @@ function Sidebar({ visible, notes, currentNoteId, onCreate, onDelete, onSelect }
               </div>
             </div>
             <button
-              className="delete-btn"
+              className={styles.deleteBtn}
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(note.id);

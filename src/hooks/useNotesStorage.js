@@ -2,28 +2,30 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'markdown-notes';
 
-export function useNotesStorage() {
-  const [notes, setNotes] = useState([]);
-  const [currentNoteId, setCurrentNoteId] = useState(null);
-  const [content, setContent] = useState('');
-
-  // load notes on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setNotes(parsed);
-        if (parsed.length > 0) {
-          setCurrentNoteId(parsed[0].id);
-          setContent(parsed[0].content);
-        }
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to load notes:', e);
-      }
+// Load initial state from localStorage
+function loadInitialNotes() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error('Failed to load notes:', e);
+      return [];
     }
-  }, []);
+  }
+  return [];
+}
+
+export function useNotesStorage() {
+  const [notes, setNotes] = useState(loadInitialNotes);
+  const [currentNoteId, setCurrentNoteId] = useState(() => {
+    const initialNotes = loadInitialNotes();
+    return initialNotes.length > 0 ? initialNotes[0].id : null;
+  });
+  const [content, setContent] = useState(() => {
+    const initialNotes = loadInitialNotes();
+    return initialNotes.length > 0 ? initialNotes[0].content : '';
+  });
 
   // debounce autosave
   const saveTimer = useRef(null);
@@ -40,7 +42,7 @@ export function useNotesStorage() {
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [content, currentNoteId]);
+  }, [content, currentNoteId, notes]);
 
   const createNewNote = () => {
     const now = new Date();
