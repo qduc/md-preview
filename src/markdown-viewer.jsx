@@ -5,7 +5,7 @@ const MarkdownViewer = () => {
   const [notes, setNotes] = useState([]);
   const [currentNoteId, setCurrentNoteId] = useState(null);
   const [content, setContent] = useState('');
-  const [showNotesList, setShowNotesList] = useState(true);
+  const [showNotesList, setShowNotesList] = useState(false);
 
   // Load notes from localStorage on mount
   useEffect(() => {
@@ -281,7 +281,7 @@ const MarkdownViewer = () => {
         }
 
         .toggle-sidebar-btn {
-          display: none;
+          display: block;
           position: absolute;
           top: 20px;
           left: 20px;
