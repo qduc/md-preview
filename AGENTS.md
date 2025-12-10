@@ -1,33 +1,29 @@
 # Repository Guidelines
 
+This repository is a Vite-powered React markdown editor/previewer with local note storage. Use the guidelines below to contribute quickly and safely.
+
 ## Project Structure & Module Organization
-- `src/main.jsx` boots React into `#root`; `src/App.jsx` routes to `MarkdownViewer`.
-- `src/markdown-viewer.jsx` holds the note editor/preview logic, inline styles, and localStorage interactions under the `markdown-notes` key.
-- `src/index.css` contains global Vite starter styles (body sizing, color scheme); adjust or remove if overriding in components.
-- `public/` hosts static assets served as-is; `src/assets/` is for imported images/icons.
-- `index.html` is the Vite entry shell; avoid hardcoding assets outside `/src` unless truly static.
+- App entry: `src/main.jsx` bootstraps `src/App.jsx`, which renders `src/markdown-viewer.jsx`.
+- UI components: `src/components/` (Sidebar, Toolbar, Editor, Preview); shared styles in `src/styles/` with CSS modules.
+- Logic & utilities: `src/hooks/useNotesStorage.js` (localStorage CRUD) and `src/utils/markdown.js` (marked + DOMPurify + highlight.js).
+- Assets live in `src/assets/`; static files in `public/`. Tests sit next to code as `*.test.js`; vitest setup is in `src/test/setup.js`.
 
 ## Build, Test, and Development Commands
-- `npm install` fetches dependencies.
-- `npm run build` creates a production bundle in `dist/`.
-- `npm run lint` runs ESLint via the flat config; fix warnings before PRs.
+- `npm run build`: Production bundle into `dist/`.
+- `npm run lint`: ESLint (flat config) over the repo.
+- `npm test`: Vitest unit suite; add `-- ui` or `--coverage` via `npm run test:ui` / `npm run test:coverage`. Target a file with `npm test -- src/utils/markdown.test.js`.
 
 ## Coding Style & Naming Conventions
-- Use React function components with hooks; keep components in PascalCase (`MarkdownViewer`), helpers/constants in camelCase/SCREAMING_SNAKE_CASE.
-- Prefer 2-space indentation, single quotes, and trailing semicolons where files already use them; match surrounding style.
-- ESLint extends `@eslint/js` plus React hooks/refresh rules; `no-unused-vars` ignores ALL_CAPS values. Run lint before pushing.
-- Keep inline styles scoped; use CSS classes in kebab-case if adding shared styles.
+- JavaScript/JSX with ES modules; prefer function components and hooks. Use camelCase for variables/functions, PascalCase for components, kebab-case for CSS module files.
+- Indentation is 2 spaces; prefer single quotes and trailing semicolons as seen in existing files.
+- ESLint extends `@eslint/js` recommended plus React Hooks/React Refresh; address lint warnings before opening a PR. Avoid unused vars (allowed constants matching `^[A-Z_]`).
+- Keep components focused; shared logic goes into `src/hooks/` or `src/utils/`.
 
 ## Testing Guidelines
-- No automated test suite yet; rely on `npm run lint` and manual checks in the browser.
-- Validate flows: creating, switching, deleting notes; markdown rendering (headings, lists, code blocks); localStorage persistence across reloads.
-- If adding tests, favor Vite-friendly tools (e.g., Vitest + React Testing Library) and colocate specs near components.
-
-## Commit & Pull Request Guidelines
-- Write concise, present-tense commits (e.g., "Add sidebar toggle logic"); keep one logical change per commit when possible.
-- PRs should include a summary, linked issues (if any), screenshots/gifs for UI changes, and steps to verify (`npm run lint`, `npm run dev` smoke check).
-- Note any data-impacting changes to localStorage keys or note schema in the PR description.
+- Framework: Vitest + Testing Library + jsdom; matcher extras come from `@testing-library/jest-dom` via `src/test/setup.js`.
+- Place tests alongside source as `*.test.js` (e.g., `src/hooks/useNotesStorage.test.js`). Mirror file names and describe behaviors, not implementations.
+- Cover new branches and error handling (e.g., malformed localStorage data). For rendering output, assert on text and roles rather than DOM structure when possible.
 
 ## Security & Configuration Tips
-- Do not store secrets; everything runs client-side. Environment values intended for the client must be prefixed with `VITE_`.
-- Local notes live in `localStorage`; be mindful when debugging to avoid exposing personal data in screenshots or logs.
+- Rendered HTML is sanitized with DOMPurify; keep that path intact when touching `src/utils/markdown.js`.
+- Notes persist in `localStorage`; avoid adding secrets or remote data-fetching without configuration review. When introducing new dependencies, prefer audited packages and update `package-lock.json`.
