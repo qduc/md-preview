@@ -75,6 +75,7 @@ const purifyConfig = {
     'blockquote',
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
     'input', // For GFM task lists
+    'span',
   ],
   ALLOWED_ATTR: [
     'href', 'title', 'target', 'rel',
