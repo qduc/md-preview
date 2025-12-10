@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Plus, Trash2, ChevronDown } from 'lucide-react';
+import { FileText, Plus, Trash2, LayoutPanelLeft } from 'lucide-react';
 
 const MarkdownViewer = () => {
   const [notes, setNotes] = useState([]);
@@ -280,17 +280,32 @@ const MarkdownViewer = () => {
           background: #fecaca;
         }
 
+        .editor-controls {
+          padding: 16px 20px;
+          border-bottom: 1px solid #e5e5e5;
+          background: #f7f7f7;
+          display: flex;
+          align-items: center;
+        }
+
         .toggle-sidebar-btn {
-          display: block;
-          position: absolute;
-          top: 20px;
-          left: 20px;
-          z-index: 11;
-          padding: 8px;
-          background: white;
-          border: 1px solid #e5e5e5;
-          border-radius: 6px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 14px;
+          border-radius: 8px;
+          background: #fff;
+          border: 1px solid #d1d5db;
+          color: #111827;
+          font-size: 13px;
+          font-weight: 500;
           cursor: pointer;
+          transition: background 0.2s, border-color 0.2s;
+        }
+
+        .toggle-sidebar-btn:hover {
+          background: #f0f4f8;
+          border-color: #b4bcc8;
         }
 
         .editor-section {
@@ -459,10 +474,6 @@ const MarkdownViewer = () => {
             transform: translateX(-100%);
           }
 
-          .toggle-sidebar-btn {
-            display: block;
-          }
-
           .panes-container {
             grid-template-columns: 1fr;
           }
@@ -533,9 +544,7 @@ const MarkdownViewer = () => {
           }
 
           .toggle-sidebar-btn {
-            top: 12px;
-            left: 12px;
-            padding: 6px;
+            padding: 6px 10px;
           }
 
           .pane {
@@ -668,12 +677,16 @@ const MarkdownViewer = () => {
       </div>
 
       <div className="editor-section">
-        <button
-          className="toggle-sidebar-btn"
-          onClick={() => setShowNotesList(!showNotesList)}
-        >
-          <ChevronDown size={20} />
-        </button>
+        <div className="editor-controls">
+          <button
+            className="toggle-sidebar-btn"
+            onClick={() => setShowNotesList(!showNotesList)}
+            aria-pressed={showNotesList}
+          >
+            <LayoutPanelLeft size={18} />
+            <span>{showNotesList ? 'Hide notes' : 'Show notes'}</span>
+          </button>
+        </div>
 
         <div className="panes-container">
           <div className="pane">
