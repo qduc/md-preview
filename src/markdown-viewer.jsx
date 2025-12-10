@@ -1,144 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { FileText, Plus, Trash2, LayoutPanelLeft } from 'lucide-react';
+import React, { useState } from 'react';
+import Sidebar from './components/Sidebar.jsx';
+import Toolbar from './components/Toolbar.jsx';
+import Editor from './components/Editor.jsx';
+import Preview from './components/Preview.jsx';
+import { useNotesStorage } from './hooks/useNotesStorage.js';
 
 const MarkdownViewer = () => {
-  const [notes, setNotes] = useState([]);
-  const [currentNoteId, setCurrentNoteId] = useState(null);
-  const [content, setContent] = useState('');
+  const {
+    notes,
+    currentNoteId,
+    content,
+    setContent,
+    createNewNote,
+    deleteNote,
+    switchNote,
+  } = useNotesStorage();
   const [showNotesList, setShowNotesList] = useState(false);
-
-  // Load notes from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem('markdown-notes');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setNotes(parsed);
-        if (parsed.length > 0) {
-          setCurrentNoteId(parsed[0].id);
-          setContent(parsed[0].content);
-        }
-      } catch (e) {
-        console.error('Failed to load notes:', e);
-      }
-    }
-  }, []);
-
-  // Auto-save current note
-  useEffect(() => {
-    if (currentNoteId !== null) {
-      const timer = setTimeout(() => {
-        const updated = notes.map(n =>
-          n.id === currentNoteId ? { ...n, content, updatedAt: new Date().toISOString() } : n
-        );
-        setNotes(updated);
-        localStorage.setItem('markdown-notes', JSON.stringify(updated));
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [content, currentNoteId]);
-
-  const createNewNote = () => {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-    const title = `Note ${dateStr} ${timeStr}`;
-    
-    const newNote = {
-      id: Date.now().toString(),
-      title,
-      content: '',
-      createdAt: now.toISOString(),
-      updatedAt: now.toISOString(),
-    };
-    
-    const updated = [newNote, ...notes];
-    setNotes(updated);
-    setCurrentNoteId(newNote.id);
-    setContent('');
-    localStorage.setItem('markdown-notes', JSON.stringify(updated));
-  };
-
-  const deleteNote = (id) => {
-    const updated = notes.filter(n => n.id !== id);
-    setNotes(updated);
-    localStorage.setItem('markdown-notes', JSON.stringify(updated));
-    
-    if (currentNoteId === id) {
-      if (updated.length > 0) {
-        setCurrentNoteId(updated[0].id);
-        setContent(updated[0].content);
-      } else {
-        setCurrentNoteId(null);
-        setContent('');
-      }
-    }
-  };
-
-  const switchNote = (id) => {
-    const note = notes.find(n => n.id === id);
-    if (note) {
-      setCurrentNoteId(id);
-      setContent(note.content);
-    }
-  };
-
-  // Markdown to HTML renderer with GitHub-flavored markdown support
-  const renderMarkdown = (text) => {
-    let html = text;
-
-    // Escape HTML
-    html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-    // Code blocks with syntax highlighting class
-    html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-      const language = lang || 'plain';
-      return `<pre class="code-block"><code class="language-${language}">${code.trim()}</code></pre>`;
-    });
-
-    // Inline code
-    html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
-
-    // Headings
-    html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
-    html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
-    html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
-
-    // Bold and italic
-    html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-
-    // Links
-    html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-
-    // Images
-    html = html.replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 4px;" />');
-
-    // Lists (unordered)
-    html = html.replace(/^\* (.*?)$/gm, '<li>$1</li>');
-    html = html.replace(/^\- (.*?)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*?<\/li>)/s, (match) => `<ul>${match}</ul>`);
-
-    // Blockquotes
-    html = html.replace(/^> (.*?)$/gm, '<blockquote>$1</blockquote>');
-
-    // Horizontal rule
-    html = html.replace(/^---$/gm, '<hr />');
-
-    // Line breaks
-    html = html.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br />');
-    html = `<p>${html}</p>`;
-
-    // Clean up empty paragraphs
-    html = html.replace(/<p><\/p>/g, '');
-
-    return html;
-  };
-
-  const currentNote = notes.find(n => n.id === currentNoteId);
 
   return (
     <div className="markdown-viewer">
@@ -633,79 +510,24 @@ const MarkdownViewer = () => {
         }
       `}</style>
 
-      <div className={`sidebar ${!showNotesList ? 'hidden' : ''}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-title">
-            <FileText size={16} />
-            Notes
-          </div>
-          <button className="new-note-btn" onClick={createNewNote}>
-            <Plus size={16} />
-            New
-          </button>
-        </div>
-        <div className="notes-list">
-          {notes.map(note => (
-            <div
-              key={note.id}
-              className={`note-item ${currentNoteId === note.id ? 'active' : ''}`}
-              onClick={() => switchNote(note.id)}
-            >
-              <div className="note-item-content">
-                <div className="note-item-title">{note.title}</div>
-                <div className="note-item-date">
-                  {new Date(note.updatedAt).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </div>
-              </div>
-              <button
-                className="delete-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteNote(note.id);
-                }}
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
+      <Sidebar
+        visible={showNotesList}
+        notes={notes}
+        currentNoteId={currentNoteId}
+        onCreate={createNewNote}
+        onDelete={deleteNote}
+        onSelect={switchNote}
+      />
 
       <div className="editor-section">
-        <div className="editor-controls">
-          <button
-            className="toggle-sidebar-btn"
-            onClick={() => setShowNotesList(!showNotesList)}
-            aria-pressed={showNotesList}
-          >
-            <LayoutPanelLeft size={18} />
-            <span>{showNotesList ? 'Hide notes' : 'Show notes'}</span>
-          </button>
-        </div>
+        <Toolbar
+          showNotesList={showNotesList}
+          onToggleSidebar={() => setShowNotesList(!showNotesList)}
+        />
 
         <div className="panes-container">
-          <div className="pane">
-            <div className="pane-label">Editor</div>
-            <textarea
-              className="editor"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Start typing your markdown here..."
-            />
-          </div>
-
-          <div className="pane">
-            <div className="pane-label">Preview</div>
-            <div
-              className="preview"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-            />
-          </div>
+          <Editor value={content} onChange={setContent} placeholder="Start typing your markdown here..." />
+          <Preview content={content} />
         </div>
       </div>
     </div>
