@@ -1,11 +1,15 @@
 import React from 'react';
 import { renderMarkdown } from '../utils/markdown.js';
 
-function Preview({ content, styles }) {
+function Preview({ content, styles, scrollRef }) {
   return (
     <div className={styles.pane}>
       <div className={styles.paneLabel}>Preview</div>
-      <div className={styles.preview} dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />
+      <div
+        ref={scrollRef}
+        className={styles.preview}
+        dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+      />
     </div>
   );
 }

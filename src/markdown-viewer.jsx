@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import Toolbar from './components/Toolbar.jsx';
 import Editor from './components/Editor.jsx';
@@ -17,6 +17,19 @@ const MarkdownViewer = () => {
     switchNote,
   } = useNotesStorage();
   const [showNotesList, setShowNotesList] = useState(false);
+  const [syncScrollEnabled, setSyncScrollEnabled] = useState(true);
+  const editorRef = useRef(null);
+  const previewRef = useRef(null);
+
+  const handleEditorScroll = () => {
+    if (!syncScrollEnabled || !editorRef.current || !previewRef.current) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = editorRef.current;
+    const percentage = scrollTop / (scrollHeight - clientHeight);
+
+    const preview = previewRef.current;
+    preview.scrollTop = percentage * (preview.scrollHeight - preview.clientHeight);
+  };
 
   return (
     <div className={styles.markdownViewer}>
@@ -34,6 +47,8 @@ const MarkdownViewer = () => {
         <Toolbar
           showNotesList={showNotesList}
           onToggleSidebar={() => setShowNotesList(!showNotesList)}
+          syncScrollEnabled={syncScrollEnabled}
+          onToggleSyncScroll={() => setSyncScrollEnabled(!syncScrollEnabled)}
           styles={styles}
         />
 
@@ -43,10 +58,13 @@ const MarkdownViewer = () => {
             onChange={setContent}
             placeholder="Start typing your markdown here..."
             styles={styles}
+            scrollRef={editorRef}
+            onScroll={handleEditorScroll}
           />
           <Preview
             content={content}
             styles={styles}
+            scrollRef={previewRef}
           />
         </div>
       </div>
