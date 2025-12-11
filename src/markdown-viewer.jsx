@@ -4,6 +4,7 @@ import Toolbar from './components/Toolbar.jsx';
 import Editor from './components/Editor.jsx';
 import Preview from './components/Preview.jsx';
 import { useNotesStorage } from './hooks/useNotesStorage.js';
+import { useTheme } from './hooks/useTheme.js';
 import styles from './styles/markdown-viewer.module.css';
 
 const MarkdownViewer = () => {
@@ -16,6 +17,7 @@ const MarkdownViewer = () => {
     deleteNote,
     switchNote,
   } = useNotesStorage();
+  const { theme, toggleTheme } = useTheme();
   const [showNotesList, setShowNotesList] = useState(false);
   const [syncScrollEnabled, setSyncScrollEnabled] = useState(true);
   const editorRef = useRef(null);
@@ -32,7 +34,7 @@ const MarkdownViewer = () => {
   };
 
   return (
-    <div className={styles.markdownViewer}>
+    <div className={styles.markdownViewer} data-theme={theme}>
       <Sidebar
         visible={showNotesList}
         notes={notes}
@@ -49,6 +51,8 @@ const MarkdownViewer = () => {
           onToggleSidebar={() => setShowNotesList(!showNotesList)}
           syncScrollEnabled={syncScrollEnabled}
           onToggleSyncScroll={() => setSyncScrollEnabled(!syncScrollEnabled)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
           styles={styles}
         />
 
