@@ -1,8 +1,26 @@
+import React, { useEffect, useRef } from 'react';
 import { FileText, Trash2 } from 'lucide-react';
 
-function Sidebar({ visible, notes, currentNoteId, onDelete, onSelect, styles }) {
+function Sidebar({ visible, notes, currentNoteId, onDelete, onSelect, onClose, styles }) {
+  const sidebarRef = useRef(null);
+
+  useEffect(() => {
+    if (visible) {
+      const handleClickOutside = (event) => {
+        if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+          onClose();
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+      };
+    }
+  }, [visible, onClose]);
+
   return (
-    <div className={`${styles.sidebar} ${!visible ? styles.hidden : ''}`}>
+    <div ref={sidebarRef} className={`${styles.sidebar} ${!visible ? styles.hidden : ''}`}>
       <div className={styles.sidebarHeader}>
         <div className={styles.sidebarTitle}>
           <FileText size={16} />

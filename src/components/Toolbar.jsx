@@ -14,7 +14,7 @@ function Toolbar({ showNotesList, onToggleSidebar, syncScrollEnabled, onToggleSy
       </button>
       <button
         className={styles.toggleSidebarBtn}
-        onClick={onToggleSidebar}
+        onClick={(e) => { e.stopPropagation(); onToggleSidebar(); }}
         aria-pressed={showNotesList}
       >
         <LayoutPanelLeft size={16} />

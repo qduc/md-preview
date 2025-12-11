@@ -61,6 +61,7 @@ const MarkdownViewer = () => {
         currentNoteId={currentNoteId}
         onDelete={deleteNote}
         onSelect={switchNote}
+        onClose={() => setShowNotesList(false)}
         styles={styles}
       />
 
