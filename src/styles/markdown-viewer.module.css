@@ -241,7 +241,7 @@ body {
   box-sizing: border-box;
 
   /* Typography - explicit values */
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: 'Cascadia Code', 'Consolas', 'Monaco', 'Ubuntu Mono', monospace;
   font-size: 14px;
   font-weight: 400;
   font-style: normal;
@@ -251,8 +251,9 @@ body {
 
   /* Text rendering */
   white-space: pre-wrap;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  word-wrap: anywhere;
+  overflow-wrap: anywhere;
+  overflow: hidden;
   tab-size: 4;
   -moz-tab-size: 4;
 
@@ -306,7 +307,7 @@ body {
 
 /* Syntax Highlighting Styles - Color only, no font-weight/font-style changes */
 .editorOverlay :global(.md-bold) {
-  font-weight: bold;
+  font-weight: bolder;
 }
 
 .editorOverlay :global(.md-italic) {
@@ -496,7 +497,7 @@ body {
 }
 
 .preview pre code {
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: 'Cascadia Code', 'Consolas', 'Monaco', 'Ubuntu Mono', monospace;
   font-size: 13px;
   color: var(--text-code);
   line-height: 1.5;
@@ -506,7 +507,7 @@ body {
   background: var(--bg-inline-code);
   padding: 3px 7px;
   border-radius: 4px;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-family: 'Cascadia Code', 'Consolas', 'Monaco', 'Ubuntu Mono', monospace;
   font-size: 13px;
   color: var(--text-inline-code);
   border: 1px solid var(--border-tertiary);
