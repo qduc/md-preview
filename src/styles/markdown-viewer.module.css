@@ -168,7 +168,7 @@ body {
   border-radius: 8px;
   background: var(--bg-primary);
   border: 1px solid var(--border-secondary);
-    color: var(--text-primary);
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -214,7 +214,7 @@ body {
   font-weight: 600;
   color: var(--text-tertiary);
   background: var(--bg-tertiary);
-    border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
@@ -225,100 +225,104 @@ body {
   position: relative;
   flex: 1;
   display: grid;
-    grid-template: 1fr / 1fr;
-    overflow: hidden;
-  }
+  grid-template: 1fr / 1fr;
+  overflow: hidden;
+}
 
-  /* Shared editor base typography/padding/wrapping */
-  .editor,
-  .editorOverlay {
-    grid-area: 1 / 1 / 2 / 2;
+/* Shared editor base typography/padding/wrapping */
+.editor,
+.editorOverlay {
+  grid-area: 1 / 1 / 2 / 2;
 
-    /* Box model - explicit values */
+  /* Box model - explicit values */
   padding: 20px;
   margin: 0;
-    border: 0;
-    box-sizing: border-box;
+  border: 0;
+  box-sizing: border-box;
 
-    /* Typography - explicit values */
+  /* Typography - explicit values */
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
   font-weight: 400;
-    font-style: normal;
+  font-style: normal;
   line-height: 1.6;
   letter-spacing: 0;
-    word-spacing: 0;
+  word-spacing: 0;
 
-    /* Text rendering */
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    tab-size: 4;
-    -moz-tab-size: 4;
+  /* Text rendering */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  tab-size: 4;
+  -moz-tab-size: 4;
 
-    /* Dimensions */
-    width: 100%;
-    height: 100%;
-  }
+  /* Dimensions */
+  width: 100%;
+  height: 100%;
+}
 
-  /* Editor Overlay (Syntax Highlighting) */
-  .editorOverlay {
-    pointer-events: none;
-    color: var(--text-primary);
+/* Editor Overlay (Syntax Highlighting) */
+.editorOverlay {
+  pointer-events: none;
+  color: var(--text-primary);
   background: transparent;
-    overflow: hidden;
-    /* Hidden because we sync scroll via JS */
-    z-index: 1;
-  }
+  overflow: hidden;
+  /* Hidden because we sync scroll via JS */
+  z-index: 1;
+}
 
-  /* Editor textarea */
-  .editor {
-    resize: none;
-    background: transparent;
-    /* Transparent to show overlay */
-    color: transparent;
-    /* Text invisible, caret visible */
-    caret-color: var(--text-primary);
+.markdownViewer .editorContainer .editorOverlay {
+  padding-right: 28px;
+}
+
+/* Editor textarea */
+.editor {
+  resize: none;
+  background: transparent;
+  /* Transparent to show overlay */
+  color: transparent;
+  /* Text invisible, caret visible */
+  caret-color: var(--text-primary);
   outline: none;
   overflow: auto;
-    z-index: 2;
-    transition: background-color 0.3s ease;
+  z-index: 2;
+  transition: background-color 0.3s ease;
 
-    /* Browser-specific resets */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+  /* Browser-specific resets */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 
-    /* Firefox adds internal padding */
-    -moz-padding-start: 0;
-    -moz-padding-end: 0;
+  /* Firefox adds internal padding */
+  -moz-padding-start: 0;
+  -moz-padding-end: 0;
 
-    /* Safari adds border-radius */
-    border-radius: 0;
+  /* Safari adds border-radius */
+  border-radius: 0;
 
-    /* Prevent iOS zoom on focus */
-    font-size: max(14px, 1em);
-  }
+  /* Prevent iOS zoom on focus */
+  font-size: max(14px, 1em);
+}
 
-  /* Syntax Highlighting Styles - Color only, no font-weight/font-style changes */
-  .editorOverlay :global(.md-bold) {
-    color: var(--text-heading);
-  }
+/* Syntax Highlighting Styles - Color only, no font-weight/font-style changes */
+.editorOverlay :global(.md-bold) {
+  font-weight: bold;
+}
 
-  .editorOverlay :global(.md-italic) {
-    color: var(--accent-secondary);
-  }
+.editorOverlay :global(.md-italic) {
+  color: var(--accent-secondary);
+}
 
-  .editorOverlay :global(.md-heading) {
-    color: var(--accent-primary);
-  }
+.editorOverlay :global(.md-heading) {
+  color: var(--accent-primary);
+}
 
-  .editorOverlay :global(.md-code) {
-    color: var(--accent-secondary);
-  }
+.editorOverlay :global(.md-code) {
+  color: var(--accent-secondary);
+}
 
-  .editorOverlay :global(.md-quote) {
-    color: var(--text-tertiary);
+.editorOverlay :global(.md-quote) {
+  color: var(--text-tertiary);
 }
 
 /* Preview pane */
@@ -506,7 +510,7 @@ body {
   font-size: 13px;
   color: var(--text-inline-code);
   border: 1px solid var(--border-tertiary);
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .preview pre code {
@@ -546,10 +550,10 @@ body {
 .preview thead {
   background: var(--bg-tertiary);
   border-bottom: 2px solid var(--border-secondary);
-  }
+}
 
-  [data-theme="dark"] .preview thead {
-    background: var(--bg-hover);
+[data-theme="dark"] .preview thead {
+  background: var(--bg-hover);
 }
 
 .preview th {
@@ -572,7 +576,7 @@ body {
   padding: 12px 18px;
   border-right: 1px solid var(--border-primary);
   border-bottom: 1px solid var(--border-primary);
-    color: var(--text-secondary);
+  color: var(--text-secondary);
   line-height: 1.6;
 }
 
@@ -666,8 +670,8 @@ body {
     border-bottom: 1px solid var(--border-primary);
   }
 
-    .editor,
-    .editorOverlay {
+  .editor,
+  .editorOverlay {
     padding: 16px;
     font-size: 13px;
   }
@@ -731,8 +735,8 @@ body {
     max-height: 45vh;
   }
 
-    .editor,
-    .editorOverlay {
+  .editor,
+  .editorOverlay {
     padding: 12px;
     font-size: 12px;
   }
@@ -765,7 +769,8 @@ body {
 
 /* Large tablets and desktop improvements */
 @media (min-width: 1024px) {
-.editor,
+
+  .editor,
   .editorOverlay {
     font-size: 15px;
   }
@@ -781,8 +786,8 @@ body {
     width: 320px;
   }
 
-    .editor,
-    .editorOverlay {
+  .editor,
+  .editorOverlay {
     padding: 24px;
     font-size: 16px;
   }
