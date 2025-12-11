@@ -13,6 +13,8 @@ This repository is a Vite-powered React markdown editor/previewer with local not
 - `npm run lint`: ESLint (flat config) over the repo.
 - `npm test`: Vitest unit suite; add `-- ui` or `--coverage` via `npm run test:ui` / `npm run test:coverage`. Target a file with `npm test -- src/utils/markdown.test.js`.
 
+Avoid running `npm run dev` to verify your works; use `npm run build` and `npm test` instead to catch issues early.
+
 ## Coding Style & Naming Conventions
 - JavaScript/JSX with ES modules; prefer function components and hooks. Use camelCase for variables/functions, PascalCase for components, kebab-case for CSS module files.
 - Indentation is 2 spaces; prefer single quotes and trailing semicolons as seen in existing files.

@@ -10,7 +10,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   background: var(--bg-secondary);
-    color: var(--text-primary);
+  color: var(--text-primary);
 }
 
 /* Main container */
@@ -18,7 +18,7 @@ body {
   display: flex;
   height: 100vh;
   background: var(--bg-primary);
-    transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 /* Sidebar */
@@ -28,7 +28,7 @@ body {
   display: flex;
   flex-direction: column;
   background: var(--bg-tertiary);
-    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .sidebar.hidden {
@@ -85,7 +85,7 @@ body {
   padding: 12px;
   margin-bottom: 6px;
   background: var(--bg-primary);
-    border: 1px solid var(--border-primary);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
@@ -97,12 +97,12 @@ body {
 
 .noteItem:hover {
   background: var(--bg-hover);
-    border-color: var(--border-secondary);
+  border-color: var(--border-secondary);
 }
 
 .noteItem.active {
   background: var(--bg-active);
-    border-color: var(--accent-border);
+  border-color: var(--accent-border);
 }
 
 .noteItemContent {
@@ -149,11 +149,12 @@ body {
 [data-theme="dark"] .deleteBtn:hover {
   background: #991b1b;
 }
+
 /* Toolbar */
 .editorControls {
   padding: 10px 20px;
   border-bottom: 1px solid var(--border-primary);
-    background: var(--bg-toolbar);
+  background: var(--bg-toolbar);
   display: flex;
   align-items: center;
   transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -166,7 +167,7 @@ body {
   padding: 6px 12px;
   border-radius: 8px;
   background: var(--bg-primary);
-    border: 1px solid var(--border-secondary);
+  border: 1px solid var(--border-secondary);
     color: var(--text-primary);
   font-size: 12px;
   font-weight: 500;
@@ -176,7 +177,7 @@ body {
 
 .toggleSidebarBtn:hover {
   background: var(--bg-hover);
-    border-color: var(--border-tertiary);
+  border-color: var(--border-tertiary);
 }
 
 /* Editor section */
@@ -212,26 +213,112 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--text-tertiary);
-    background: var(--bg-tertiary);
+  background: var(--bg-tertiary);
     border-bottom: 1px solid var(--border-primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Editor textarea */
-.editor {
+/* Editor Container */
+.editorContainer {
+  position: relative;
   flex: 1;
+  display: grid;
+    grid-template: 1fr / 1fr;
+    overflow: hidden;
+  }
+
+  /* Shared editor base typography/padding/wrapping */
+  .editor,
+  .editorOverlay {
+    grid-area: 1 / 1 / 2 / 2;
+
+    /* Box model - explicit values */
   padding: 20px;
+  margin: 0;
+    border: 0;
+    box-sizing: border-box;
+
+    /* Typography - explicit values */
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 14px;
+  font-weight: 400;
+    font-style: normal;
   line-height: 1.6;
-  border: none;
-  resize: none;
-  background: var(--bg-primary);
+  letter-spacing: 0;
+    word-spacing: 0;
+
+    /* Text rendering */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    tab-size: 4;
+    -moz-tab-size: 4;
+
+    /* Dimensions */
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Editor Overlay (Syntax Highlighting) */
+  .editorOverlay {
+    pointer-events: none;
     color: var(--text-primary);
+  background: transparent;
+    overflow: hidden;
+    /* Hidden because we sync scroll via JS */
+    z-index: 1;
+  }
+
+  /* Editor textarea */
+  .editor {
+    resize: none;
+    background: transparent;
+    /* Transparent to show overlay */
+    color: transparent;
+    /* Text invisible, caret visible */
+    caret-color: var(--text-primary);
   outline: none;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow: auto;
+    z-index: 2;
+    transition: background-color 0.3s ease;
+
+    /* Browser-specific resets */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    /* Firefox adds internal padding */
+    -moz-padding-start: 0;
+    -moz-padding-end: 0;
+
+    /* Safari adds border-radius */
+    border-radius: 0;
+
+    /* Prevent iOS zoom on focus */
+    font-size: max(14px, 1em);
+  }
+
+  /* Syntax Highlighting Styles - Color only, no font-weight/font-style changes */
+  .editorOverlay :global(.md-bold) {
+    color: var(--text-heading);
+  }
+
+  .editorOverlay :global(.md-italic) {
+    color: var(--accent-secondary);
+  }
+
+  .editorOverlay :global(.md-heading) {
+    color: var(--accent-primary);
+  }
+
+  .editorOverlay :global(.md-code) {
+    color: var(--accent-secondary);
+  }
+
+  .editorOverlay :global(.md-quote) {
+    color: var(--text-tertiary);
 }
 
 /* Preview pane */
@@ -256,7 +343,7 @@ body {
   margin: 32px 0 16px;
   padding-bottom: 8px;
   border-bottom: 2px solid var(--border-primary);
-    color: var(--text-heading);
+  color: var(--text-heading);
   line-height: 1.3;
 }
 
@@ -270,7 +357,7 @@ body {
   margin: 28px 0 14px;
   padding-bottom: 6px;
   border-bottom: 1px solid var(--border-primary);
-    color: var(--text-heading);
+  color: var(--text-heading);
   line-height: 1.35;
 }
 
@@ -353,8 +440,8 @@ body {
   color: var(--text-secondary);
 }
 
-.preview li > ul,
-.preview li > ol {
+.preview li>ul,
+.preview li>ol {
   margin-top: 8px;
   margin-bottom: 8px;
 }
@@ -372,7 +459,7 @@ body {
   border-left: 4px solid var(--accent-primary);
   margin: 20px 0;
   background: var(--bg-blockquote);
-    color: var(--text-secondary);
+  color: var(--text-secondary);
   font-style: italic;
   border-radius: 0 4px 4px 0;
   transition: background-color 0.3s ease, border-color 0.3s ease;
@@ -418,7 +505,7 @@ body {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 13px;
   color: var(--text-inline-code);
-    border: 1px solid var(--border-tertiary);
+  border: 1px solid var(--border-tertiary);
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -448,17 +535,17 @@ body {
   border-spacing: 0;
   margin: 24px 0;
   border: 1px solid var(--border-tertiary);
-    background: var(--bg-primary);
+  background: var(--bg-primary);
   font-size: 14px;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 1px 3px var(--shadow-color);
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .preview thead {
   background: var(--bg-tertiary);
-    border-bottom: 2px solid var(--border-secondary);
+  border-bottom: 2px solid var(--border-secondary);
   }
 
   [data-theme="dark"] .preview thead {
@@ -470,7 +557,7 @@ body {
   text-align: left;
   font-weight: 600;
   color: var(--text-primary);
-    border-right: 1px solid var(--border-tertiary);
+  border-right: 1px solid var(--border-tertiary);
   border-bottom: none;
   font-size: 14px;
   letter-spacing: 0.01em;
@@ -484,7 +571,7 @@ body {
 .preview td {
   padding: 12px 18px;
   border-right: 1px solid var(--border-primary);
-    border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px solid var(--border-primary);
     color: var(--text-secondary);
   line-height: 1.6;
 }
@@ -500,10 +587,10 @@ body {
 
 .preview tbody tr:nth-child(even) {
   background: var(--bg-tertiary);
-  }
+}
 
-  [data-theme="dark"] .preview tbody tr:nth-child(even) {
-    background: var(--bg-secondary);
+[data-theme="dark"] .preview tbody tr:nth-child(even) {
+  background: var(--bg-secondary);
 }
 
 .preview tbody tr:hover {
@@ -518,6 +605,7 @@ body {
 [data-theme="dark"] .preview tbody tr:hover {
   box-shadow: inset 0 0 0 1px var(--accent-primary);
 }
+
 .preview tbody tr:last-child td {
   border-bottom: none;
 }
@@ -578,7 +666,8 @@ body {
     border-bottom: 1px solid var(--border-primary);
   }
 
-  .editor {
+    .editor,
+    .editorOverlay {
     padding: 16px;
     font-size: 13px;
   }
@@ -642,7 +731,8 @@ body {
     max-height: 45vh;
   }
 
-  .editor {
+    .editor,
+    .editorOverlay {
     padding: 12px;
     font-size: 12px;
   }
@@ -675,7 +765,8 @@ body {
 
 /* Large tablets and desktop improvements */
 @media (min-width: 1024px) {
-  .editor {
+.editor,
+  .editorOverlay {
     font-size: 15px;
   }
 
@@ -690,7 +781,8 @@ body {
     width: 320px;
   }
 
-  .editor {
+    .editor,
+    .editorOverlay {
     padding: 24px;
     font-size: 16px;
   }
