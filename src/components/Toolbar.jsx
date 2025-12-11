@@ -1,9 +1,17 @@
 import React from 'react';
-import { LayoutPanelLeft, ArrowLeftRight, Moon, Sun } from 'lucide-react';
+import { LayoutPanelLeft, ArrowLeftRight, Moon, Sun, Plus } from 'lucide-react';
 
-function Toolbar({ showNotesList, onToggleSidebar, syncScrollEnabled, onToggleSyncScroll, theme, onToggleTheme, styles }) {
+function Toolbar({ showNotesList, onToggleSidebar, syncScrollEnabled, onToggleSyncScroll, theme, onToggleTheme, onCreate, styles }) {
   return (
     <div className={styles.editorControls}>
+      <button
+        className={styles.toggleSidebarBtn}
+        onClick={onCreate}
+        style={{ marginRight: '10px' }}
+      >
+        <Plus size={16} />
+        <span>New Note</span>
+      </button>
       <button
         className={styles.toggleSidebarBtn}
         onClick={onToggleSidebar}

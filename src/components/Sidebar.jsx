@@ -1,7 +1,6 @@
-import React from 'react';
-import { FileText, Plus, Trash2 } from 'lucide-react';
+import { FileText, Trash2 } from 'lucide-react';
 
-function Sidebar({ visible, notes, currentNoteId, onCreate, onDelete, onSelect, styles }) {
+function Sidebar({ visible, notes, currentNoteId, onDelete, onSelect, styles }) {
   return (
     <div className={`${styles.sidebar} ${!visible ? styles.hidden : ''}`}>
       <div className={styles.sidebarHeader}>
@@ -9,10 +8,6 @@ function Sidebar({ visible, notes, currentNoteId, onCreate, onDelete, onSelect, 
           <FileText size={16} />
           Notes
         </div>
-        <button className={styles.newNoteBtn} onClick={onCreate}>
-          <Plus size={16} />
-          New
-        </button>
       </div>
       <div className={styles.notesList}>
         {notes.map((note) => (

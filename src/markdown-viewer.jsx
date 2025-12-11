@@ -59,7 +59,6 @@ const MarkdownViewer = () => {
         visible={showNotesList}
         notes={notes}
         currentNoteId={currentNoteId}
-        onCreate={createNewNote}
         onDelete={deleteNote}
         onSelect={switchNote}
         styles={styles}
@@ -73,6 +72,7 @@ const MarkdownViewer = () => {
           onToggleSyncScroll={() => setSyncScrollEnabled(!syncScrollEnabled)}
           theme={theme}
           onToggleTheme={toggleTheme}
+          onCreate={createNewNote}
           styles={styles}
         />
 
