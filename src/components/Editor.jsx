@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { highlightMarkdown } from '../utils/syntaxHighlighter';
 
-function Editor({ value, onChange, placeholder, styles, scrollRef, onScroll }) {
+function Editor({ value, onChange, placeholder, styles, scrollRef, onScroll, editorWidth = 50 }) {
   const preRef = useRef(null);
 
   const handleScroll = (e) => {
@@ -17,7 +17,7 @@ function Editor({ value, onChange, placeholder, styles, scrollRef, onScroll }) {
   const highlightedCode = highlightMarkdown(value || '');
 
   return (
-    <div className={styles.pane}>
+    <div className={styles.pane} style={{ '--editor-width': `${editorWidth}%` }}>
       <div className={styles.paneLabel}>Editor</div>
       <div className={styles.editorContainer}>
         <pre

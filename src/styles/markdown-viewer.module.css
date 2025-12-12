@@ -191,12 +191,11 @@ body {
 }
 
 .panesContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
+  display: flex;
   flex: 1;
   min-height: 0;
   border-top: 1px solid var(--border-primary);
+  position: relative;
 }
 
 .pane {
@@ -204,6 +203,32 @@ body {
   flex-direction: column;
   min-height: 0;
   border-right: 1px solid var(--border-primary);
+}
+
+.pane:last-child {
+  border-right: none;
+}
+
+.editorPane {
+  width: var(--editor-width, 50%);
+  flex: 0 0 var(--editor-width, 50%);
+}
+
+.resizeHandle {
+  width: 8px;
+  background: var(--border-primary);
+  cursor: col-resize;
+  position: relative;
+  z-index: 1;
+  transition: background 0.2s;
+}
+
+.resizeHandle:hover {
+  background: var(--border-secondary);
+}
+
+.resizeHandle:active {
+  background: var(--accent-primary);
 }
 
 .pane:last-child {
@@ -661,7 +686,16 @@ body {
   }
 
   .panesContainer {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .editorPane {
+    width: 100%;
+    flex: 1;
+  }
+
+  .resizeHandle {
+    display: none;
   }
 
   .pane {

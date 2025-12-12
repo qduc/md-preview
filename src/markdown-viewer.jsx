@@ -20,9 +20,12 @@ const MarkdownViewer = () => {
   const { theme, toggleTheme } = useTheme();
   const [showNotesList, setShowNotesList] = useState(false);
   const [syncScrollEnabled, setSyncScrollEnabled] = useState(true);
+  const [editorWidth, setEditorWidth] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
   const editorRef = useRef(null);
   const previewRef = useRef(null);
   const isSyncingRef = useRef(null);
+  const containerRef = useRef(null);
 
   const handleEditorScroll = () => {
     if (!syncScrollEnabled || !editorRef.current || !previewRef.current) return;
@@ -53,6 +56,30 @@ const MarkdownViewer = () => {
     });
   };
 
+  const handleResizeStart = (e) => {
+    e.preventDefault();
+    setIsResizing(true);
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('mouseup', handleResizeEnd);
+  };
+
+  const handleResize = (e) => {
+    if (!isResizing || !containerRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+    
+    // Ensure minimum and maximum widths
+    const constrainedWidth = Math.max(10, Math.min(90, newWidth));
+    setEditorWidth(constrainedWidth);
+  };
+
+  const handleResizeEnd = () => {
+    setIsResizing(false);
+    document.removeEventListener('mousemove', handleResize);
+    document.removeEventListener('mouseup', handleResizeEnd);
+  };
+
   return (
     <div className={styles.markdownViewer} data-theme={theme}>
       <Sidebar
@@ -77,7 +104,7 @@ const MarkdownViewer = () => {
           styles={styles}
         />
 
-        <div className={styles.panesContainer}>
+        <div className={styles.panesContainer} ref={containerRef}>
           <Editor
             value={content}
             onChange={setContent}
@@ -85,6 +112,11 @@ const MarkdownViewer = () => {
             styles={styles}
             scrollRef={editorRef}
             onScroll={handleEditorScroll}
+            editorWidth={editorWidth}
+          />
+          <div
+            className={styles.resizeHandle}
+            onMouseDown={handleResizeStart}
           />
           <Preview
             content={content}
