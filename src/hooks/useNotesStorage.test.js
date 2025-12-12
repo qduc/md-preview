@@ -2,6 +2,20 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useNotesStorage } from './useNotesStorage';
 
+// Mock the storage configuration to use localStorage for tests
+vi.mock('../config/storage', () => ({
+  STORAGE_MODE: 'localStorage',
+  getStorageMode: () => 'localStorage',
+}));
+
+// Mock IndexedDB functions to prevent errors
+vi.mock('../utils/indexedDB', () => ({
+  initDB: vi.fn().mockResolvedValue({}),
+  getAllNotes: vi.fn().mockResolvedValue([]),
+  saveNotes: vi.fn().mockResolvedValue(undefined),
+}));
+
+
 // Helper to setup localStorage mock data
 const setupLocalStorage = (data) => {
   localStorage.getItem.mockReturnValue(JSON.stringify(data));

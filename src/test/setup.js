@@ -10,3 +10,11 @@ const localStorageMock = {
 }
 
 globalThis.localStorage = localStorageMock
+
+// Mock IndexedDB for testing
+const indexedDBMock = {
+  open: vi.fn(),
+  deleteDatabase: vi.fn(),
+}
+
+globalThis.indexedDB = indexedDBMock

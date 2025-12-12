@@ -16,6 +16,7 @@ const MarkdownViewer = () => {
     createNewNote,
     deleteNote,
     switchNote,
+    loading,
   } = useNotesStorage();
   const { theme, toggleTheme } = useTheme();
   const [showNotesList, setShowNotesList] = useState(false);
@@ -91,6 +92,13 @@ const MarkdownViewer = () => {
         onClose={() => setShowNotesList(false)}
         styles={styles}
       />
+
+      {loading && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingSpinner}></div>
+          <p>Loading notes...</p>
+        </div>
+      )}
 
       <div className={styles.editorSection}>
         <Toolbar

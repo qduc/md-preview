@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { StorageManager } from '../utils/storageManager';
+import { getStorageMode } from '../config/storage';
 
 const STORAGE_KEY = 'markdown-notes';
 
-// Load initial state from localStorage
+// Load initial state from localStorage (fallback for tests)
 function loadInitialNotes() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
@@ -17,7 +19,10 @@ function loadInitialNotes() {
 }
 
 export function useNotesStorage() {
-  const [notes, setNotes] = useState(loadInitialNotes);
+  const [notes, setNotes] = useState(() => {
+    // Always start with localStorage data for immediate UI response
+    return loadInitialNotes();
+  });
   const notesRef = useRef(notes);
   useEffect(() => {
     notesRef.current = notes;
@@ -30,6 +35,47 @@ export function useNotesStorage() {
     const initialNotes = loadInitialNotes();
     return initialNotes.length > 0 ? initialNotes[0].content : '';
   });
+  const [loading, setLoading] = useState(false);
+
+  // Get current storage mode
+  const storageMode = getStorageMode();
+
+  // Initialize storage manager
+  const storageManager = useMemo(() => new StorageManager(storageMode), [storageMode]);
+
+  // Load notes from the configured storage on mount
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadNotes() {
+      try {
+        setLoading(true);
+        const loadedNotes = await storageManager.loadNotes();
+        if (isMounted) {
+          if (loadedNotes.length > 0) {
+            setNotes(loadedNotes);
+            setCurrentNoteId(loadedNotes[0].id);
+            setContent(loadedNotes[0].content);
+          }
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Failed to load notes:', error);
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    // Only load if using IndexedDB, otherwise use the initial localStorage load
+    if (storageMode === 'indexedDB') {
+      loadNotes();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [storageManager, storageMode]);
 
   // debounce autosave
   const saveTimer = useRef(null);
@@ -50,7 +96,7 @@ export function useNotesStorage() {
     setNotes(updated);
     setCurrentNoteId(newNote.id);
     setContent(initialContent);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    storageManager.saveNotes(updated);
   };
 
   // autosave
@@ -72,7 +118,7 @@ export function useNotesStorage() {
         const updated = [newNote, ...notesRef.current];
         setNotes(updated);
         setCurrentNoteId(newNote.id);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        storageManager.saveNotes(updated);
         // Note: setContent is not needed here since content is already set
       }
       return;
@@ -87,7 +133,7 @@ export function useNotesStorage() {
           n.id === currentNoteId ? { ...n, content, updatedAt: new Date().toISOString() } : n
         );
         setNotes(updated);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        storageManager.saveNotes(updated);
       }
     }, 500);
     return () => {
@@ -98,7 +144,7 @@ export function useNotesStorage() {
   const deleteNote = (id) => {
     const updated = notes.filter((n) => n.id !== id);
     setNotes(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    storageManager.saveNotes(updated);
     if (currentNoteId === id) {
       if (updated.length > 0) {
         setCurrentNoteId(updated[0].id);
@@ -129,5 +175,6 @@ export function useNotesStorage() {
     createNewNote,
     deleteNote,
     switchNote,
+    loading,
   };
 }
