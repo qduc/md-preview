@@ -22,7 +22,6 @@ function Editor({ value, onChange, placeholder, styles, scrollRef, onScroll, edi
       style={{ '--editor-width': `${editorWidth}%` }}
       data-testid="editor-pane"
     >
-      <div className={styles.paneLabel}>Editor</div>
       <div className={styles.editorContainer}>
         <pre
           ref={preRef}

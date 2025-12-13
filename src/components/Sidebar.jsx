@@ -36,6 +36,9 @@ function Sidebar({ visible, notes, currentNoteId, onDelete, onSelect, onClose, s
           >
             <div className={styles.noteItemContent}>
               <div className={styles.noteItemTitle}>{note.title}</div>
+              <div className={styles.noteItemPreview}>
+                {note.content ? note.content.split(' ').slice(0, 5).join(' ') + (note.content.split(' ').length > 5 ? '...' : '') : ''}
+              </div>
               <div className={styles.noteItemDate}>
                 {new Date(note.updatedAt).toLocaleDateString('en-US', {
                   month: 'short',

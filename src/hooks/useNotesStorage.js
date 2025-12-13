@@ -81,6 +81,9 @@ export function useNotesStorage() {
   const saveTimer = useRef(null);
 
   const createNewNote = (initialContent = '') => {
+    // Ensure initialContent is a string to prevent circular reference errors
+    const safeContent = typeof initialContent === 'string' ? initialContent : '';
+    
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -88,14 +91,14 @@ export function useNotesStorage() {
     const newNote = {
       id: Date.now().toString(),
       title,
-      content: initialContent,
+      content: safeContent,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),
     };
     const updated = [newNote, ...notes];
     setNotes(updated);
     setCurrentNoteId(newNote.id);
-    setContent(initialContent);
+    setContent(safeContent);
     storageManager.saveNotes(updated);
   };
 

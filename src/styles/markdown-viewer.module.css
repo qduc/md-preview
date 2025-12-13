@@ -127,6 +127,16 @@ body {
   margin-top: 4px;
 }
 
+.noteItemPreview {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 16px;
+}
+
 .deleteBtn {
   padding: 4px 6px;
   background: #fee2e2;
@@ -290,7 +300,6 @@ body {
   display: grid;
   grid-template: 1fr / 1fr;
   overflow: hidden;
-  padding-top: 48px; /* Space for absolute pane label */
 }
 
 /* Shared editor base typography/padding/wrapping */
