@@ -12,8 +12,8 @@ describe('MarkdownViewer sync scroll', () => {
   it('syncs scroll from editor to preview', () => {
     render(<MarkdownViewer />);
     const textarea = screen.getByPlaceholderText('Start typing your markdown here...');
-    const previewLabel = screen.getByText('Preview');
-    const preview = previewLabel.nextElementSibling;
+    const preview = document.querySelector('[class*="preview"]');
+    expect(preview).toBeTruthy();
 
     // Put a lot of content to ensure scrollable areas
     fireEvent.change(textarea, { target: { value: Array(200).fill('hello').join('\n') } });
@@ -34,8 +34,8 @@ describe('MarkdownViewer sync scroll', () => {
   it('syncs scroll from preview to editor', () => {
     render(<MarkdownViewer />);
     const textarea = screen.getByPlaceholderText('Start typing your markdown here...');
-    const previewLabel = screen.getByText('Preview');
-    const preview = previewLabel.nextElementSibling;
+    const preview = document.querySelector('[class*="preview"]');
+    expect(preview).toBeTruthy();
 
     // Put a lot of content to ensure scrollable areas
     fireEvent.change(textarea, { target: { value: Array(200).fill('hello').join('\n') } });
