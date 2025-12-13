@@ -6,7 +6,7 @@ function Toolbar({ showNotesList, onToggleSidebar, syncScrollEnabled, onToggleSy
     <div className={styles.editorControls}>
       <button
         className={styles.toggleSidebarBtn}
-        onClick={onCreate}
+        onClick={() => onCreate()}
         style={{ marginRight: '10px' }}
       >
         <Plus size={16} />

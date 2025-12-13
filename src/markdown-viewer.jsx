@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import Toolbar from './components/Toolbar.jsx';
 import Editor from './components/Editor.jsx';
@@ -22,7 +22,7 @@ const MarkdownViewer = () => {
   const [showNotesList, setShowNotesList] = useState(false);
   const [syncScrollEnabled, setSyncScrollEnabled] = useState(true);
   const [editorWidth, setEditorWidth] = useState(50);
-  const [isResizing, setIsResizing] = useState(false);
+  const isResizingRef = useRef(false);
   const editorRef = useRef(null);
   const previewRef = useRef(null);
   const isSyncingRef = useRef(null);
@@ -57,29 +57,38 @@ const MarkdownViewer = () => {
     });
   };
 
-  const handleResizeStart = (e) => {
-    e.preventDefault();
-    setIsResizing(true);
-    document.addEventListener('mousemove', handleResize);
-    document.addEventListener('mouseup', handleResizeEnd);
-  };
+  const handleResize = useCallback((e) => {
+    if (!isResizingRef.current || !containerRef.current) return;
 
-  const handleResize = (e) => {
-    if (!isResizing || !containerRef.current) return;
-    
     const containerRect = containerRef.current.getBoundingClientRect();
     const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
-    
+
     // Ensure minimum and maximum widths
     const constrainedWidth = Math.max(10, Math.min(90, newWidth));
     setEditorWidth(constrainedWidth);
-  };
+  }, []);
 
-  const handleResizeEnd = () => {
-    setIsResizing(false);
+  const handleResizeEnd = useCallback(function handleResizeEndCb() {
+    isResizingRef.current = false;
     document.removeEventListener('mousemove', handleResize);
-    document.removeEventListener('mouseup', handleResizeEnd);
-  };
+    document.removeEventListener('mouseup', handleResizeEndCb);
+  }, [handleResize]);
+
+  const handleResizeStart = useCallback((e) => {
+    e.preventDefault();
+    isResizingRef.current = true;
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('mouseup', handleResizeEnd);
+  }, [handleResize, handleResizeEnd]);
+
+  useEffect(() => {
+    return () => {
+      // Avoid leaking document listeners if unmounted mid-drag.
+      isResizingRef.current = false;
+      document.removeEventListener('mousemove', handleResize);
+      document.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, [handleResize, handleResizeEnd]);
 
   return (
     <div className={styles.markdownViewer} data-theme={theme}>
@@ -112,7 +121,11 @@ const MarkdownViewer = () => {
           styles={styles}
         />
 
-        <div className={styles.panesContainer} ref={containerRef}>
+        <div
+          className={styles.panesContainer}
+          ref={containerRef}
+          data-testid="panes-container"
+        >
           <Editor
             value={content}
             onChange={setContent}
@@ -125,6 +138,7 @@ const MarkdownViewer = () => {
           <div
             className={styles.resizeHandle}
             onMouseDown={handleResizeStart}
+            data-testid="resize-handle"
           />
           <Preview
             content={content}

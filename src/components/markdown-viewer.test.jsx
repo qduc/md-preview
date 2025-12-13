@@ -50,4 +50,28 @@ describe('MarkdownViewer sync scroll', () => {
     const expectedEditorTop = (800 / (4200 - 400)) * (2200 - 200);
     expect(textarea.scrollTop).toBeCloseTo(expectedEditorTop, 1);
   });
+
+  describe('pane resizing', () => {
+    it('renders resize handle', () => {
+      render(<MarkdownViewer />);
+      expect(screen.getByTestId('resize-handle')).toBeInTheDocument();
+    });
+
+    it('updates editor width while dragging', () => {
+      render(<MarkdownViewer />);
+      const panesContainer = screen.getByTestId('panes-container');
+      const resizeHandle = screen.getByTestId('resize-handle');
+
+      panesContainer.getBoundingClientRect = () => ({ left: 0, width: 1000 });
+
+      // Initial state
+      expect(screen.getByTestId('editor-pane').style.getPropertyValue('--editor-width')).toBe('50%');
+
+      fireEvent.mouseDown(resizeHandle, { clientX: 500 });
+      fireEvent.mouseMove(document, { clientX: 200 });
+      fireEvent.mouseUp(document);
+
+      expect(screen.getByTestId('editor-pane').style.getPropertyValue('--editor-width')).toBe('20%');
+    });
+  });
 });
