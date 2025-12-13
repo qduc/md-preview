@@ -55,6 +55,26 @@ Notes are automatically saved to localStorage, so they'll persist across browser
 - **Build**: `npm run build` – Creates a production bundle in the `dist/` directory.
 - **Preview**: `npm run preview` – Serves the built application locally.
 
+## Deploy to GitHub Pages
+
+This repo includes a GitHub Actions workflow that automatically builds and deploys the `dist/` folder to GitHub Pages whenever you push to the `main` branch.
+
+### One-time GitHub setup
+
+1. Push this repo to GitHub.
+2. In GitHub, go to **Settings → Pages**.
+3. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+
+After the first successful workflow run on `main`, your site will be available at:
+
+- `https://<your-username>.github.io/<your-repo>/`
+
+### Repo name / base path
+
+Vite needs a correct `base` path for Pages (because Pages serves the site under `/<repo>/`). This project currently assumes the repo name is `md-preview`.
+
+If your repo name is different, update `vite.config.js` to match your repository name (the `/<repo>/` part).
+
 ### Project Structure
 
 - `src/main.jsx`: Entry point for React.
